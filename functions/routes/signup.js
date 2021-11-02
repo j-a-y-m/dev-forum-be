@@ -19,8 +19,9 @@ router.post('/',async (req, res, next) => {
             console.log(displayName);
             // See the UserRecord reference doc for the contents of userRecord.
             console.log('Successfully updated user', userRecord.toJSON());
-            // res.json({message:'signed-up successfully'});
-            res.sendStatus(200);
+            res.json({message:'sign-up successfull'});
+            // res.sendStatus(200);
+
         })
         .catch((error) => {
             console.log('Error updating u:', error);
@@ -37,7 +38,7 @@ router.post('/',async (req, res, next) => {
             }
         );
 
-
+         
 }) ;
 
 module.exports = router;
