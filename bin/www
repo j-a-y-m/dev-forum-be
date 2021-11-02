@@ -4,7 +4,8 @@
  * Module dependencies.
  */
 
-var app = require('../app');
+// var app = require('../app');
+var app = require('../functions/app');
 var debug = require('debug')('dev-forum-express:server');
 var http = require('http');
 

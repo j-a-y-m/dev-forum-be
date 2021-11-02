@@ -9,7 +9,7 @@ const firestore = admin.firestore() ;
 router.post('/',async (req, res, next) => {
 
     console.log(req.body);
-
+    try{
     const uid = req.user.user_id;
     const displayName = req.user.email.split("@")[0];
     console.log(req.body.content);
@@ -41,7 +41,15 @@ router.post('/',async (req, res, next) => {
             }
         );
 
-    return res.json({status:"ok"});
+    return res.json({message:"Question submitted"});
+    }
+    catch(err)
+    {
+        console.log("err-submit question",err);
+        return res.sendStatus(500).json({error:"Error occured"});
+    }
+
+
 }) ;
 
 module.exports = router;

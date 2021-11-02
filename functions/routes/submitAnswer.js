@@ -8,7 +8,8 @@ const firestore = admin.firestore() ;
 
 router.post('/',async (req, res, next) => {
 
-    console.log(req.body);
+    try{
+        console.log(req.body);
 
     const uid = req.user.user_id;
     const questionId = req.body.questionId ;
@@ -44,7 +45,14 @@ router.post('/',async (req, res, next) => {
             time: admin.firestore.Timestamp.now()
         })
     ;
-    return res.json({status:'post ok'});
+    return res.json({message:'Answer submitted'});
+    // return res.send("ok");
+    }
+    catch(err)
+    {
+        return res.status(500).json({error:'error occured'});
+    }
+    
 }) ;
 
 

@@ -19,7 +19,7 @@ const tokenDecode = async (req,res,next)=> {
             if(user.isBanned)
             {
                 return res.status(400).send({
-                    message: 'user banned'
+                    error: 'user banned'
                 });
             }
             req.user = user ;
