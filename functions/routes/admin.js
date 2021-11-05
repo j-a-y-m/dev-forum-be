@@ -11,7 +11,7 @@ router.post('/delete',async (req, res, next) => {
         .auth()
         .verifyIdToken(req.get("Authorization"))).admin === true))
     {
-                return res.status(400).send({
+                return res.status(403).send({
                     message: 'not an admin'
                 });
             }
@@ -30,7 +30,7 @@ router.post('/delete',async (req, res, next) => {
     //const displayName = req.user.email.split("@")[0];
 
     if (!((contentType === "answers") || (contentType === "questions"))) {
-        return res.json({error: "wrong content type"})
+        return res.status(400).json({error: "wrong content type"})
     }
 
 
@@ -40,14 +40,14 @@ router.post('/delete',async (req, res, next) => {
             .doc(contentId).get()).get("postedBy");
         const answer = (await firestore.collection("answers")
             .doc(contentId).get()).get("content");
-        inboxMsg = "your answer "+ limitContent(answer)+ " was deleted. reason: "+reason;
+        inboxMsg = "your answer "+ limitContent(answer)+ " was deleted. reason : "+reason;
     }else
     {
         uid = (await firestore.collection(contentType)
             .doc(contentId).get()).get("createdBy");
         const questionTitle = (await firestore.collection("questions")
             .doc(contentId).get()).get("title");
-        inboxMsg = "your question "+ limitContent(questionTitle)+ " was deleted. reason: "+reason;
+        inboxMsg = "your question "+ limitContent(questionTitle)+ " was deleted. reason : "+reason;
     }
 
 
@@ -76,7 +76,7 @@ router.post('/delete',async (req, res, next) => {
     //     downvotes = [];
     // }
 
-    return res.json({status:'post ok'});
+    return res.json({message:'deleted'});
 }) ;
 
 
@@ -85,8 +85,8 @@ router.post('/ban',async (req, res, next) => {
         .auth()
         .verifyIdToken(req.get("Authorization"))).admin === true))
     {
-        return res.status(400).send({
-            message: 'not an admin'
+        return res.status(403).json({
+            error: 'not an admin'
         });
     }
     const uid = req.body.uid;
@@ -104,11 +104,11 @@ router.post('/ban',async (req, res, next) => {
         .collection("inbox")
         .add({
             type: "ban",
-            message: "your are now banned from participating on this forum. reason: "+reason,
+            message: "your are now banned from participating on this forum. reason : "+reason,
             time: admin.firestore.Timestamp.now()
         })
     ;
-    return res.json({status:'post ok'});
+    return res.json({message:'user banned'});
 }) ;
 
 function limitContent(content){

@@ -9,17 +9,18 @@ const firestore = admin.firestore() ;
 router.post('/',async (req, res, next) => {
 
     console.log(req.body);
-
+    try{
     const uid = req.user.user_id;
     const contentType = req.body.contentType ;
     const contentId = req.body.id ;
     console.log("contentId "+contentId);
     const vote = req.body.vote ;
+    let voteAction ;
     //const displayName = req.user.email.split("@")[0];
 
     if(!((contentType==="answers")||(contentType==="questions")))
     {
-        return res.json({error : "wrong content type"})
+        return res.status(400).json({error : "wrong content type"})
     }
     let document = await firestore.collection(contentType)
         .doc(contentId)
@@ -44,7 +45,7 @@ router.post('/',async (req, res, next) => {
             let index = upvotes.indexOf(uid);
             upvotes.splice(index, 1);
 
-            //return res.send({error : "already upvoted!"})
+            voteAction="upvote revoked";
 
         }else
         if(downvotes.includes(uid))
@@ -52,11 +53,13 @@ router.post('/',async (req, res, next) => {
             currVotes = currVotes+2 ;
             let index = downvotes.indexOf(uid);
             downvotes.splice(index, 1);
-            upvotes.push(uid)
+            upvotes.push(uid);
+            voteAction="upvote registered";
         }else
         {
             currVotes = currVotes+1 ;
-            upvotes.push(uid)
+            upvotes.push(uid);
+            voteAction="upvote registered";
         }
 
     }else {
@@ -65,7 +68,7 @@ router.post('/',async (req, res, next) => {
             currVotes = currVotes+1;
             let index = downvotes.indexOf(uid);
             downvotes.splice(index, 1);
-            //return res.send({error : "already downvoted!"})
+            voteAction="downvote revoked";
         }else
         if(upvotes.includes(uid))
         {
@@ -73,9 +76,11 @@ router.post('/',async (req, res, next) => {
             let index = upvotes.indexOf(uid);
             upvotes.splice(index, 1);
             downvotes.push(uid);
+            voteAction="downvote registered";
         }else {
             currVotes = currVotes-1;
             downvotes.push(uid);
+            voteAction="downvote registered";
         }
 
     }
@@ -89,8 +94,18 @@ router.post('/',async (req, res, next) => {
                 downvotes : downvotes
             }
         );
-
-    res.send('post ok');
+        if(!voteAction)
+        {
+            throw "Error occured";
+        }else
+        res.json({message : voteAction});
+    // res.send('post ok');
+    }
+    catch(err)
+    {
+        console.log("err-vote",err);
+        return res.sendStatus(500).json({error:"Error occured"});
+    }
 }) ;
 
 module.exports = router;

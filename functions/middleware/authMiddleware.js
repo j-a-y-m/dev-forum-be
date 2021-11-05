@@ -1,5 +1,5 @@
 const admin = require("../firebase-config") ;
-
+const firebaseUtils = require("../util/firebase") ;
 //
 // class AuthMiddleware{
 //
@@ -15,23 +15,27 @@ const tokenDecode = async (req,res,next)=> {
 
         try{
             const user = await admin.auth().verifyIdToken(idToken) ;
-            console.log("middleware "+user)
+            console.log("middleware "+JSON.stringify(user))
             if(user.isBanned)
             {
                 return res.status(400).send({
-                    message: 'user banned'
+                    error: 'user banned'
                 });
             }
             req.user = user ;
             return next();
         }catch (e) {
-            return res.json({error : e});
+            if(e.code)
+            {
+                return res.status(400).json({error : firebaseUtils.sliceFbErrCode(e.code),e});
+            }
+            return res.json({e});
         }
 
 
     }else
     {
-        return res.json({error : "not authenticated"});
+        return res.status(401).json({error : "please login"});
     }
 
 }
