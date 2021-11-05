@@ -40,14 +40,14 @@ router.post('/delete',async (req, res, next) => {
             .doc(contentId).get()).get("postedBy");
         const answer = (await firestore.collection("answers")
             .doc(contentId).get()).get("content");
-        inboxMsg = "your answer "+ limitContent(answer)+ " was deleted. reason: "+reason;
+        inboxMsg = "your answer "+ limitContent(answer)+ " was deleted. reason : "+reason;
     }else
     {
         uid = (await firestore.collection(contentType)
             .doc(contentId).get()).get("createdBy");
         const questionTitle = (await firestore.collection("questions")
             .doc(contentId).get()).get("title");
-        inboxMsg = "your question "+ limitContent(questionTitle)+ " was deleted. reason: "+reason;
+        inboxMsg = "your question "+ limitContent(questionTitle)+ " was deleted. reason : "+reason;
     }
 
 
@@ -104,7 +104,7 @@ router.post('/ban',async (req, res, next) => {
         .collection("inbox")
         .add({
             type: "ban",
-            message: "your are now banned from participating on this forum. reason: "+reason,
+            message: "your are now banned from participating on this forum. reason : "+reason,
             time: admin.firestore.Timestamp.now()
         })
     ;

@@ -35,7 +35,7 @@ const tokenDecode = async (req,res,next)=> {
 
     }else
     {
-        return res.json({error : "not authenticated"});
+        return res.status(401).json({error : "please login"});
     }
 
 }
